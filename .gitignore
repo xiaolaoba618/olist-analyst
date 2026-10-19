@@ -1,0 +1,13 @@
+.Rproj.user/
+.spyproject/
+.workbuddy/
+.RData
+.Rhistory
+.idea/
+create_db.py
+data/
+*.csv
+*.html
+slides/
+.slidep
+*.db
