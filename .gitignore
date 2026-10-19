@@ -9,4 +9,4 @@ data/
 *.html
 slides/
 .slidep
-*.db
+db/
