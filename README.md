@@ -55,20 +55,25 @@ data/raw/                       原始 CSV
   src/customer_eval.py           客单分层与高价值名单
 ```
 
-## 四、复现
+## 四、执行流程
 
-```bash
-# 1. 建库（可重复运行，会重建）
-D:\anaconda3\envs\DA_TOOL\python.exe create_db.py
+每个问题基本按下面这条链路走一遍，虚线是反馈回路：
 
-# 2. 取数：用 SQLite 客户端执行各 src/*.sql
-
-# 3. 清洗与检验：R 运行 src/data_processed.r / .R
-
-# 4. 建模输出
-D:\anaconda3\envs\DA_TOOL\python.exe 延迟率分析/src/identify_express_risks_data.py
-D:\anaconda3\envs\DA_TOOL\python.exe 延迟率分析/src/precise_gmv_simulated.py
+```mermaid
+flowchart LR
+    DB[("SQLite<br/>db/olist.db")] --> SQL
+    SQL["① SQL 取数<br/>多表关联 · 派生变量"] --> R
+    R["② R 清洗与检验<br/>构造标签 · 显著性验证"] --> PY
+    PY["③ Python 建模<br/>分级 · 优化 · 蒙特卡洛"] --> OUT
+    OUT["④ 输出结果<br/>名单 · 配置表 · 报告"] --> VIZ
+    VIZ{"可视化复核<br/>report.html"}
+    VIZ -.->|发现异常 · 回头检验| R
+    VIZ -.->|因子成立 · 进入落地| ACT["业务动作"]
+    SQL -.-> VIZ
+    R -.-> VIZ
 ```
+
+看图提假设、统计做验证、建模出结果——可视化不是最后一步，而是贯穿全程的复核环节。
 
 ## 五、口径约定
 
