@@ -9,5 +9,6 @@ data/
 *.html
 slides/
 .slidep
-db/
-#.png
+
+
+
