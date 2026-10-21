@@ -42,8 +42,8 @@ def calculate_aggressive_steps(row):
     # 比如 P75 是 2.1 天，取整为 3 天；P75 是 4.8 天，取整为 5 天
     recommended = int(np.ceil(p75_days))
 
-    # 规则3：强制兜底，最少延 1 天，最多延 7 天（不再有 -1 放弃策略）
-    return max(1, min(recommended, 7))
+    # 规则3：强制兜底，最少延 1 天，最多延 14 天（不再有 -1 放弃策略）
+    return max(1, min(recommended, 14))
 
 
 route_analysis_filtered['推荐延迟天数'] = route_analysis_filtered.apply(calculate_aggressive_steps, axis=1)

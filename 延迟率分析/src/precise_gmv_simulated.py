@@ -110,3 +110,27 @@ axes[1].legend()
 
 plt.tight_layout()
 plt.show()
+
+# ================= 6. 导出各线路推荐延迟天数 CSV =================
+# 直接利用当前的 route_df 复制一份用于导出
+route_output = route_df.copy()
+
+# 按照业务需求，调整列的顺序（把 P75 和推荐天数放进去）
+columns_order = ['发货州', '收货州', '平均距离_km', '总订单数', '物流延迟率', '延迟时长_P75', '推荐延迟天数']
+# 过滤掉当前数据里不存在的列，防止报错
+existing_cols = [col for col in columns_order if col in route_output.columns]
+route_output = route_output[existing_cols]
+
+# 按“推荐延迟天数”降序、“物流延迟率”降序排列，把最恶劣的线路排在前面
+route_output = route_output.sort_values(by=['推荐延迟天数', '物流延迟率'], ascending=[False, False])
+
+# 创建输出目录并保存
+output_dir = BASE_DIR / '线路延迟预送时间推荐结果'
+output_dir.mkdir(parents=True, exist_ok=True)
+route_csv_path = output_dir / '基于P75的高挽救率线路延迟配置表.csv'
+
+route_output.to_csv(route_csv_path, index=False, encoding='utf-8-sig')
+
+print(f"\n✅ 线路推荐延迟配置表已成功导出至：{route_csv_path}")
+print("==== 延迟最严重 (需要干预最久) 的 Top 10 线路配置 ====")
+print(route_output.head(10).to_string(index=False))
