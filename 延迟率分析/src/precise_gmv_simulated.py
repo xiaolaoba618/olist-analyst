@@ -50,10 +50,18 @@ def run_monte_carlo(target_df, mode='fixed', fixed_days=2, scope='line', label="
 
     scope='line'  线路级 ETA：承诺时效按线路配置，改动后该线路【全部订单】都承担转化流失
     scope='order' 订单级 ETA：可对单个订单差异化出价时效，仅有【被干预订单】承担转化流失
+
+    口径说明（两套分母，不要混用）：
+      · 成本分母 = len(target_df)，即真正看到更长时效、承担转化流失的订单
+      · 挽救率分母 = LOGISTICS_TOTAL，即「确实超时且归因为物流」的订单
+        （送达状态='延迟' 且 超时因素='运送延迟导致延期'，共 4,820 单）。
+        注意：超时因素='运送延迟导致延期' 有 5,021 单，其中 201 单送达状态是「准时」
+        （延迟天数=0，卡线送达，本来就没超时），这 201 单既不该算进分母、也不该算成
+        「被救回」，必须剔除，否则分子虚高 15%、分母虚高 4%。
     """
     total_target = len(target_df)
     if total_target == 0:
-        return None, 0, 0, 0, 0
+        return None, 0, 0, 0, 0, 0
 
     df_calc = target_df.copy()
     df_calc['实际延长天数'] = fixed_days if mode == 'fixed' else df_calc['推荐延长天数']
@@ -62,10 +70,18 @@ def run_monte_carlo(target_df, mode='fixed', fixed_days=2, scope='line', label="
     )
 
     # ---------- 点估计 ----------
-    rescued_mask = (df_calc['送达状态'] == '延迟') & (df_calc['延迟天数_天'] <= df_calc['实际延长天数'])
-    rescued_cnt = int(rescued_mask.sum())
-    protected_gmv = df_calc.loc[rescued_mask, '总价格'].sum()
-    real_rescue_rate = rescued_cnt / total_target
+    # 只看确实超时的订单（送达状态='延迟'），延迟天数在延长期内即视为被救回
+    is_delayed = df_calc['送达状态'] == '延迟'
+    saved_mask = is_delayed & (df_calc['延迟天数_天'] <= df_calc['实际延长天数'])
+
+    # 全原因救回量：延长 ETA 对发货责任的超时同样有效，A/C 这类「大面积生效」的方案
+    # 会顺带救回一部分发货原因的超时单，这部分是真实收益，单独记录
+    rescued_all = int(saved_mask.sum())
+    # 物流归因救回量：三套方案横向可比的主指标，分母同样是物流归因超时单
+    rescued_cnt = int((saved_mask & (df_calc['超时因素'] == '运送延迟导致延期')).sum())
+
+    protected_gmv = df_calc.loc[saved_mask & (df_calc['超时因素'] == '运送延迟导致延期'), '总价格'].sum()
+    real_rescue_rate = rescued_cnt / LOGISTICS_TOTAL
     base_loss_gmv = (df_calc['总价格'] * (1 - (1 - DAILY_LOSS_RATE) ** df_calc['等效延长天数'])).sum()
 
     # ---------- 向量化蒙特卡洛（避免逐行 apply 拖慢 1 万次循环） ----------
@@ -74,6 +90,7 @@ def run_monte_carlo(target_df, mode='fixed', fixed_days=2, scope='line', label="
     days_arr = df_calc['实际延长天数'].to_numpy(dtype=float)
     delay_arr = df_calc['延迟天数_天'].to_numpy(dtype=float)
     is_delay_arr = (df_calc['送达状态'] == '延迟').to_numpy()
+    is_logi_arr = (df_calc['超时因素'] == '运送延迟导致延期').to_numpy()
     n = len(df_calc)
 
     gmv_loss_list, protected_list = [], []
@@ -87,7 +104,7 @@ def run_monte_carlo(target_df, mode='fixed', fixed_days=2, scope='line', label="
         daily_rate = max(0.0, rng.normal(DAILY_LOSS_RATE, DAILY_LOSS_STD))
         gmv_loss_list.append((price_s * (1 - (1 - daily_rate) ** eff_s)).sum())
 
-        r_mask = is_delay_arr[idx] & (delay_arr[idx] <= days_s)
+        r_mask = is_delay_arr[idx] & is_logi_arr[idx] & (delay_arr[idx] <= days_s)
         protected_list.append(price_s[r_mask].sum())
 
     gmv_loss_array = np.array(gmv_loss_list)
@@ -99,10 +116,12 @@ def run_monte_carlo(target_df, mode='fixed', fixed_days=2, scope='line', label="
     scope_cn = '线路级 ETA（全线路订单承担流失）' if scope == 'line' else '订单级 ETA（仅干预订单承担流失）'
     print(f"\n==== {label} ====")
     print(f"  - ETA 生效口径: {scope_cn}")
-    print(f"  - 计入成本的订单总量: {total_target} 单")
+    print(f"  - 计入成本的订单（承担转化流失）: {total_target} 单")
+    print(f"  - 挽救率分母（物流原因超时单）: {LOGISTICS_TOTAL} 单")
     print(f"  - 平均延长天数: {df_calc['实际延长天数'].mean():.2f} 天")
-    print(f"  - 救回的延迟订单: {rescued_cnt} 单")
-    print(f"  - 整体挽救率(救回单/计入成本订单): {real_rescue_rate * 100:.2f}%")
+    print(f"  - 救回的超时订单(全原因): {rescued_all} 单")
+    print(f"  - 其中物流归因: {rescued_cnt} 单")
+    print(f"  - 整体挽救率(物流归因救回 / {LOGISTICS_TOTAL} 物流延迟单): {real_rescue_rate * 100:.2f}%")
     print(f"  - 预期避免 1 星差评: {star1_saved:.0f} 个（1星率差 {STAR1_DELTA:.2%}）")
     print(f"  - 保护的 GMV: {protected_gmv:.2f} 元")
     print(f"  - 预期 GMV 损失: {avg_loss:.2f} 元")
@@ -110,47 +129,81 @@ def run_monte_carlo(target_df, mode='fixed', fixed_days=2, scope='line', label="
     print(f"  - 平均单救成本: {avg_loss / rescued_cnt if rescued_cnt else 0:.0f} 元/单")
     print(f"  - 单个差评的 GMV 代价: {avg_loss / star1_saved if star1_saved else 0:.0f} 元/个")
 
-    return gmv_loss_array, avg_loss, protected_gmv, base_loss_gmv, rescued_cnt
+    return gmv_loss_array, avg_loss, protected_gmv, base_loss_gmv, rescued_cnt, rescued_all
 
 
 # ================= 提取样本并对比三套方案 =================
-logistics_orders = df[df['超时因素'] == '运送延迟导致延期'].copy()
+# 物流原因造成的超时订单（对应「分级后总数据」里的超时原因='物流/算法'，
+# 两张表的归因字段命名不同：本表叫超时因素='运送延迟导致延期'）
+# 必须同时满足「送达状态=延迟」，剔除 201 单卡线准时的（延迟天数=0，本来就没超时）
+logistics_orders = df[(df['送达状态'] == '延迟') & (df['超时因素'] == '运送延迟导致延期')].copy()
+LOGISTICS_TOTAL = len(logistics_orders)
 
 # 方案 A：全量订单统一 +2 天（线路级 ETA，成本由 72,907 单全部承担）
-res_A_arr, loss_A, prot_A, base_A, cnt_A = run_monte_carlo(
-    df, mode='fixed', fixed_days=2, scope='line', label="方案A：全量统一延时 2 天"
+# 注意：A 不是待选的治理方案，它是 A/B 实验的实验组设计——全量加时、不区分原因，
+# 用来实测「每多等一天到底流失多少转化」，把 1.8%/天 这个借来的文献值换成平台自己的数。
+res_A_arr, loss_A, prot_A, base_A, cnt_A, all_A = run_monte_carlo(
+    df, mode='fixed', fixed_days=2, scope='line',
+    label="方案A（实验对照组）：全量统一延时 2 天"
 )
 
-# 方案 B：仅纯物流延迟订单 +2 天（订单级 ETA，成本仅由 5,021 单承担）
-res_B_arr, loss_B, prot_B, base_B, cnt_B = run_monte_carlo(
-    logistics_orders, mode='fixed', fixed_days=2, scope='order', label="方案B：仅纯物流延迟订单延时 2 天"
+# 方案 B：仅纯物流延迟订单 +2 天（订单级 ETA，成本仅由这批订单承担）
+res_B_arr, loss_B, prot_B, base_B, cnt_B, all_B = run_monte_carlo(
+    logistics_orders, mode='fixed', fixed_days=2, scope='order',
+    label="方案B：仅纯物流延迟订单延时 2 天"
 )
 
 # 方案 C：挽救率导向的线路级阶梯（成本由【被配置线路】的全部订单承担）
 # 注意分母：非干预线路推荐天数为 0、时效不变、不承担流失，若把它们计入分母会人为稀释挽救率
 intervened_mask = df['推荐延长天数'] > 0
-res_C_arr, loss_C, prot_C, base_C, cnt_C = run_monte_carlo(
-    df[intervened_mask], mode='dynamic', scope='line', label="方案C：挽救率导向的线路级阶梯延时"
+res_C_arr, loss_C, prot_C, base_C, cnt_C, all_C = run_monte_carlo(
+    df[intervened_mask], mode='dynamic', scope='line',
+    label="方案C：挽救率导向的线路级阶梯延时"
 )
+
+# ================= A/B 实验本身的成本 =================
+# 方案 A 作为全量策略是亏的，但它真正的作用是当实验组。实验只跑一小段时间、
+# 且只覆盖一部分流量，代价远小于「全量长期执行」的 46 万。这里按真实日均单量折算。
+order_dates = pd.to_datetime(df['下单时间'], errors='coerce')
+span_days = max((order_dates.max() - order_dates.min()).days, 1)
+daily_orders = len(df) / span_days
+EXP_DAYS, EXP_TREAT_SHARE = 14, 0.2          # 实验周期 14 天，实验组占 20% 流量
+exp_orders = daily_orders * EXP_DAYS * EXP_TREAT_SHARE
+unit_loss_A = loss_A / len(df)               # 每单承担的 GMV 流失
+exp_cost = exp_orders * unit_loss_A
+print("\n" + "=" * 60)
+print("🧪 【方案A 作为 A/B 实验组的代价】——它真正的用途")
+print(f"  数据跨度 {span_days} 天，日均 {daily_orders:.0f} 单")
+print(f"  实验设计: 周期 {EXP_DAYS} 天 × 实验组 {EXP_TREAT_SHARE:.0%} 流量 = 约 {exp_orders:.0f} 单进入实验组")
+print(f"  单均 GMV 流失: {unit_loss_A:.2f} 元/单")
+print(f"  实验总代价: 约 {exp_cost:,.0f} 元 GMV（相对全量长期执行的 {loss_A:,.0f} 元，仅为 {exp_cost / loss_A:.2%}）")
+print(f"  结论: 用 {'约 %.0f 元' % exp_cost} 换来真实的日流失率，替换掉 1.8%/天 这个外部文献值，")
+print("        这个实验必须做——它决定了后面所有方案的成本模型是不是建立在沙子上。")
+print("=" * 60)
 
 # ================= 结果汇总 =================
 print("\n" + "=" * 60)
 print("📊 【核心业务账本】三方案横向对比")
-print(f"{'方案':<26}{'计入成本':>8}{'救回':>7}{'挽救率':>8}{'避免差评':>9}{'GMV流失':>12}")
-for name, denom, cnt, loss in [
-    ("A 全量统一+2天(线路级)", len(df), cnt_A, loss_A),
-    ("B 仅物流单+2天(订单级)", len(logistics_orders), cnt_B, loss_B),
-    ("C 线路级阶梯(挽救率导向)", int(intervened_mask.sum()), cnt_C, loss_C),
+print(f"挽救率分母统一为物流原因超时单 {LOGISTICS_TOTAL} 单（三方案可比）")
+print(f"{'方案':<26}{'计入成本':>9}{'救回(全原因)':>12}{'物流归因':>9}{'挽救率':>8}{'避免差评':>9}{'GMV流失':>12}{'元/单':>8}")
+for name, denom, cnt, allc, loss in [
+    ("A 全量+2天(实验对照)", len(df), cnt_A, all_A, loss_A),
+    ("B 仅物流单+2天(订单级)", len(logistics_orders), cnt_B, all_B, loss_B),
+    ("C 线路级阶梯(挽救率导向)", int(intervened_mask.sum()), cnt_C, all_C, loss_C),
 ]:
-    rate = cnt / denom * 100 if denom else 0
-    print(f"{name:<26}{denom:>8}{cnt:>7}{rate:>7.2f}%{cnt * STAR1_DELTA:>9.0f}{loss:>12.0f}")
+    rate = cnt / LOGISTICS_TOTAL * 100
+    unit = loss / cnt if cnt else 0
+    print(f"{name:<26}{denom:>9}{allc:>12}{cnt:>9}{rate:>7.2f}%{cnt * STAR1_DELTA:>9.0f}{loss:>12.0f}{unit:>8.0f}")
 print("-" * 60)
 print(f"  1 星率差（超时 {STAR1_RATE_DELAYED:.2%} vs 非延迟 {STAR1_RATE_ONTIME:.2%}）: {STAR1_DELTA:.2%}")
 print(f"  时效锚点 T_REF: {T_REF:.1f} 天")
 print("=" * 60)
 
 print("\n【方案间的取舍】")
-print(f"  方案C 相对方案B：多救回 {cnt_C - cnt_B} 单，"
+print(f"  方案A 不作为治理方案参与选型：它是实验组基准。"
+      f"全量加时救回 {all_A} 单（含 {all_A - cnt_A} 单非物流归因），但成本 {loss_A:,.0f} 元，"
+      f"单救成本 {loss_A / cnt_A if cnt_A else 0:.0f} 元/单，长期执行不可接受。")
+print(f"  方案C 相对方案B：多救回 {cnt_C - cnt_B} 单（物流归因），"
       f"多避免 {(cnt_C - cnt_B) * STAR1_DELTA:.0f} 个 1 星差评，"
       f"多付 GMV {loss_C - loss_B:,.0f} 元")
 print(f"  方案B 单救成本 {loss_B / cnt_B if cnt_B else 0:.0f} 元/单 vs "
@@ -161,7 +214,7 @@ print("  注：方案C 的价值在于『当订单级 ETA 不可用时』的次�
 
 # ================= 可视化 =================
 fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-for ax, arr, title, color in [(axes[0], res_A_arr, '方案A：全量统一 +2 天', 'salmon'),
+for ax, arr, title, color in [(axes[0], res_A_arr, '方案A（实验对照组）：全量统一 +2 天', 'salmon'),
                               (axes[1], res_B_arr, '方案B：仅物流延迟单 +2 天', 'orange'),
                               (axes[2], res_C_arr, '方案C：挽救率导向线路级阶梯', 'lightgreen')]:
     ax.hist(arr, bins=PLOT_BINS, color=color, edgecolor='black', alpha=0.7)
