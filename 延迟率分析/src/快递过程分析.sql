@@ -133,12 +133,7 @@ ORDER BY 下单时间)
 
 SELECT *
 FROM temp 
-WHERE
-实际最终延迟时间 > 0
-AND 
-strftime('%Y-%m-%d', `下单时间`) >= '2018-02-20'
-AND
-strftime('%Y-%m-%d', `下单时间`) <= '2018-03-21';
+
 
 
 
