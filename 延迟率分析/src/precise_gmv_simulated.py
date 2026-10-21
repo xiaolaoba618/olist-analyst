@@ -8,16 +8,11 @@ plt.rcParams['axes.unicode_minus'] = False
 
 BASE_DIR = Path(__file__).parent.parent
 df = pd.read_csv(BASE_DIR / 'processed_data' / "GMV分析.csv", encoding="utf-8-sig")
+# 【修改】：读取 V3 数据
 route_df = pd.read_csv(BASE_DIR / 'processed_data' / "各物流线路延迟率分析.csv", encoding="utf-8-sig")
 
-# ================= 2. 数据准备 =================
-# 直接读取第一块代码中算好的“推荐延迟天数”
 route_map = route_df.set_index(['发货州', '收货州'])['推荐延迟天数'].to_dict()
-
-df['推荐延长天数'] = df.apply(
-    lambda x: route_map.get((x['发货州'], x['收货州']), 0), axis=1
-)
-df['推荐延长天数'] = df['推荐延长天数'].clip(lower=0)
+df['推荐延长天数'] = df.apply(lambda x: route_map.get((x['发货州'], x['收货州']), 0), axis=1)
 
 # ================= 3. 封装通用蒙特卡洛函数 =================
 def run_monte_carlo(target_df, mode='fixed', fixed_days=2, label=""):
@@ -44,6 +39,7 @@ def run_monte_carlo(target_df, mode='fixed', fixed_days=2, label=""):
         sampled_orders = target_df.sample(n=simulated_count, replace=True)
         sample_total_gmv = sampled_orders['总价格'].sum()
 
+        # 转化率流失计算
         mean_loss_rate = 0.018 * sampled_orders['实际延长天数'].mean()
         std_loss_rate = 0.005 * np.sqrt(sampled_orders['实际延长天数'].mean())
 
@@ -71,54 +67,46 @@ res_A_arr, loss_A, prot_A = run_monte_carlo(
     target_df=logistics_orders, mode='fixed', fixed_days=2, label="方案A：统一延时 2 天 (基准)"
 )
 
-# 方案 B：动态阶梯延时
+# 方案 B：V3版动态阶梯延时
 df_dynamic = logistics_orders[logistics_orders['推荐延长天数'] > 0].copy()
 res_B_arr, loss_B, prot_B = run_monte_carlo(
-    target_df=df_dynamic, mode='dynamic', label="方案B：动态阶梯延时 (P90+封顶)"
+    target_df=df_dynamic, mode='dynamic', label="方案B：基于 P75 的高挽救率动态延时"
 )
 
 # ================= 5. 结果汇总与可视化 =================
-saved_cost = loss_A - loss_B
-print(f"\n💰 【降本增效】：方案B 相比 方案A，额外节省了 {saved_cost:.2f} 元的 GMV 损失！")
+# ================= 5. 结果汇总与可视化 =================
+# 1. 转化成本差额（代码原来的算法）
+diff_cost = loss_A - loss_B
+
+# 2. 综合净收益（你的手算算法）
+extra_protected_gmv = prot_B - prot_A
+extra_loss_cost = loss_B - loss_A
+net_benefit = extra_protected_gmv - extra_loss_cost
+
+print("\n" + "="*40)
+print("📊 【核心业务账本】")
+print(f"方案A (统一延2天): 保护 {prot_A:.2f} 元 | 流失 {loss_A:.2f} 元")
+print(f"方案B (动态阶梯延时): 保护 {prot_B:.2f} 元 | 流失 {loss_B:.2f} 元")
+print("-" * 40)
+print(f"✅ 额外保护的 GMV: +{extra_protected_gmv:.2f} 元")
+print(f"❌ 额外流失的 GMV: -{extra_loss_cost:.2f} 元")
+print(f"💰 【综合商业净收益】: {net_benefit:+.2f} 元")
+if net_benefit > 0:
+    print("🎉 结论：方案B 虽然牺牲了微小的转化率，但大幅挽回了高危 GMV，综合净收益为正！")
+else:
+    print("⚠️ 结论：方案B 过于激进，付出的转化成本超过了挽回的 GMV，建议调低封顶天数。")
+print("="*40 + "\n")
 
 fig, axes = plt.subplots(1, 2, figsize=(15, 5))
 axes[0].hist(res_A_arr, bins=50, color='salmon', edgecolor='black', alpha=0.7)
 axes[0].axvline(loss_A, color='red', linestyle='dashed', linewidth=2, label=f'平均损失: {loss_A:.2f}')
-axes[0].set_title('方案A：物流订单统一延 2 天 (简单粗暴)')
+axes[0].set_title('方案A：统一延 2 天')
 axes[0].legend()
 
 axes[1].hist(res_B_arr, bins=50, color='lightgreen', edgecolor='black', alpha=0.7)
 axes[1].axvline(loss_B, color='darkgreen', linestyle='dashed', linewidth=2, label=f'平均损失: {loss_B:.2f}')
-axes[1].set_title('方案B：基于线路动态阶梯延时 (精准调优)')
+axes[1].set_title('方案B：P75 高挽救率阶梯延时')
 axes[1].legend()
 
 plt.tight_layout()
 plt.show()
-
-# ================= 6. 导出各线路推荐延迟天数配置表 =================
-# 复制一份线路数据用于导出
-route_output = route_df.copy()
-
-# 按照推荐延迟天数降序，物流延迟率降序排列，把最恶劣、最需要紧急干预的线路排在最上面
-# 注意：确保 route_df 中存在 '推荐延迟天数' 和 '物流延迟率' 这两个列
-route_output = route_output.sort_values(
-    by=['推荐延迟天数', '物流延迟率'],
-    ascending=[False, False]
-)
-
-# 调整一下列的顺序，把业务核心指标放前面
-columns_order = ['发货州', '收货州', '平均距离_km', '总订单数', '物流延迟率', '平均延迟时长_天', '推荐延迟天数']
-# 确保这些列都存在，避免报错
-existing_cols = [col for col in columns_order if col in route_output.columns]
-route_output = route_output[existing_cols]
-
-# 设置输出路径并保存
-output_dir = BASE_DIR / '线路延迟预送时间推荐结果'
-output_dir.mkdir(parents=True, exist_ok=True)
-route_csv_path = output_dir / '各线路推荐延迟天数配置表.csv'
-
-route_output.to_csv(route_csv_path, index=False, encoding='utf-8-sig')
-
-print(f"\n✅ 线路推荐延迟配置表已成功导出至：{route_csv_path}")
-print("==== 延迟最严重的 Top 10 线路配置 ====")
-print(route_output.head(10).to_string(index=False))
