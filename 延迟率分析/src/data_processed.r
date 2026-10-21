@@ -317,6 +317,6 @@ print("\n==== 提前/延迟天数对拿 5 星概率的 OR 值 ====")
 print(res_or[grep("提前分箱", names(res_or))])
 
 
-write_csv(df,"延迟率分析/processed_data/GMV分析.csv")
+write_csv(df_gmv,"延迟率分析/processed_data/GMV分析.csv")
 
 
