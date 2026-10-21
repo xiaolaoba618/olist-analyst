@@ -38,7 +38,7 @@ SQLite 取数构造变量  →  R 清洗与统计检验  →  Python 建模输�
 create_db.py                    CSV → SQLite 建库（输出到 db/olist.db）
 db/olist.db                     SQLite 数据库，9 张表
 data/raw/                       原始 CSV
-数据字典.html                    表结构、字段释义、关联关系
+
 
 延迟率分析/                      主线一：履约延迟
   src/快递过程分析.sql            取数：距离、时长、归因变量
@@ -46,7 +46,7 @@ data/raw/                       原始 CSV
   src/identify_express_risks_data.py   线路风险识别与延时方案求解
   src/precise_gmv_simulated.py   ETA 调整三方案蒙特卡洛
   初步报告.md                     完整结论报告
-  report.html / dashboard.html   可视化看板
+
 
 客户分析以及复购率判断/            主线二：客户复购
   src/客户留存数据选取.sql         取数：客户级订单宽表
@@ -54,6 +54,7 @@ data/raw/                       原始 CSV
   src/time_series_repurchase.py  复购间隔分布
   src/customer_eval.py           客单分层与高价值名单
 ```
+产生的数据文件、可视化报告均未上传，在初步报告中有总体思路和大致结论。
 
 ## 四、执行流程
 
