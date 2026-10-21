@@ -94,3 +94,31 @@ axes[1].legend()
 
 plt.tight_layout()
 plt.show()
+
+# ================= 6. 导出各线路推荐延迟天数配置表 =================
+# 复制一份线路数据用于导出
+route_output = route_df.copy()
+
+# 按照推荐延迟天数降序，物流延迟率降序排列，把最恶劣、最需要紧急干预的线路排在最上面
+# 注意：确保 route_df 中存在 '推荐延迟天数' 和 '物流延迟率' 这两个列
+route_output = route_output.sort_values(
+    by=['推荐延迟天数', '物流延迟率'],
+    ascending=[False, False]
+)
+
+# 调整一下列的顺序，把业务核心指标放前面
+columns_order = ['发货州', '收货州', '平均距离_km', '总订单数', '物流延迟率', '平均延迟时长_天', '推荐延迟天数']
+# 确保这些列都存在，避免报错
+existing_cols = [col for col in columns_order if col in route_output.columns]
+route_output = route_output[existing_cols]
+
+# 设置输出路径并保存
+output_dir = BASE_DIR / '线路延迟预送时间推荐结果'
+output_dir.mkdir(parents=True, exist_ok=True)
+route_csv_path = output_dir / '各线路推荐延迟天数配置表.csv'
+
+route_output.to_csv(route_csv_path, index=False, encoding='utf-8-sig')
+
+print(f"\n✅ 线路推荐延迟配置表已成功导出至：{route_csv_path}")
+print("==== 延迟最严重的 Top 10 线路配置 ====")
+print(route_output.head(10).to_string(index=False))
