@@ -173,7 +173,7 @@ FROM t
 WHERE 商品类型 IS NOT NULL                --筛选无描述商品
 GROUP BY customer_unique_id, 商品类型
 )
-SELECT * FROM c
+SELECT * FROM t
 
 
 

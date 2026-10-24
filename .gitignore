@@ -3,6 +3,7 @@
 .workbuddy/
 .RData
 .Rhistory
+.Rprofile
 .idea/
 data/
 *.csv
@@ -10,3 +11,6 @@ data/
 slides/
 .slidep
 /db/
+.vscode/
+__pycache__/
+
