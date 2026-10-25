@@ -76,6 +76,7 @@ shipping_limit_date '预计最晚发货时间',
 order_estimated_delivery_date '预计送达时间',
 order_delivered_carrier_date '实际发货时间',
 order_delivered_customer_date '实际送达时间',
+CAST(strftime('%H', order_purchase_timestamp) AS INTEGER) '下单时刻',
 CAST(strftime('%H', order_delivered_carrier_date) AS INTEGER) '发货时刻',
 CAST(strftime('%H', order_approved_at) AS INTEGER) '审核通过时刻',
 CAST(strftime('%H', order_delivered_customer_date) AS INTEGER) '收货时刻',
@@ -143,8 +144,7 @@ AND ROUND(julianday(order_delivered_customer_date) - julianday(order_delivered_c
 ORDER BY 下单时间)
 
 SELECT 
-SUM(CASE WHEN 送达时间差>0 THEN 1 ELSE 0 END ),
-COUNT(*)
+*
 FROM t
 
 

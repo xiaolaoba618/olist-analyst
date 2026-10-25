@@ -6,12 +6,13 @@ import lightgbm as lgb
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, average_precision_score
+from config import CONFIG
 
 # 设置中文字体，防止图表中文乱码 (Windows用SimHei，Mac用Arial Unicode MS)
 plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.rcParams['axes.unicode_minus'] = False
 
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = CONFIG['base_dir']
 print(BASE_DIR)
 # %%
 df = pd.read_csv(BASE_DIR /'processed_data' / "LightGBM.csv", encoding="utf-8-sig")
@@ -58,6 +59,8 @@ rename_dict = {
     "是否为国际订单": "is_international"
 }
 
+
+print(len(rename_dict))
 # 3. 执行重命名
 df = df.rename(columns=rename_dict)
 
@@ -92,9 +95,6 @@ inf_cols = [col for col in numeric_cols if np.isinf(df[col]).any()]
 if len(inf_cols) > 0:
     print(f"⚠️ 警告：以下列包含无穷大，已替换为 NaN：{inf_cols}")
     df[inf_cols] = df[inf_cols].replace([np.inf, -np.inf], np.nan)
-
-print("数据类型检查：")
-print(df.dtypes)
 
 
 # %%

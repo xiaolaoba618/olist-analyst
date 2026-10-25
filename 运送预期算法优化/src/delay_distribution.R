@@ -49,7 +49,7 @@ p_density <- ggplot(df, aes(x = `实际最终延迟时间`)) +
        title = "直方图+核密度+正态拟合曲线",
        subtitle = paste0("均值=", round(x_mean,4), " 标准差=", round(x_sd,4))) +
   theme_bw()
-print(p_density)
+#print(p_density)
 ggsave("运送预期算法优化/assets/img1.svg", plot = p_density, device = "svg", width = 8, height = 5, dpi = 300)
 
 # ---------------------- 正态QQ图（核心看图判断厚尾/偏态） ----------------------
@@ -58,7 +58,7 @@ p_qq <- ggplot(df, aes(sample = `实际最终延迟时间`)) +
   stat_qq_line(color = "red", linewidth = 1) +
   labs(title = "正态QQ图", x = "理论正态分位数", y = "样本分位数") +
   theme_bw()
-print(p_qq)
+#print(p_qq)
 
 # ---------------------- 应用延迟推迟后 -----------------------
 library(ggplot2)
@@ -79,7 +79,7 @@ p_lin <- ggplot(comp, aes(x = value, fill = group, colour = group)) +
   scale_colour_manual(values = c("#E64B35", "#4DBBD5")) +
   labs(title = "延迟分布对比（线性尺度）", x = "延迟", y = "密度", fill = NULL, colour = NULL) +
   theme_bw(base_size = 13) + theme(legend.position = "top")
-p_lin
+#p_lin
 
 # ---------- 3. log1p 尺度密度对比（重点：看尾部是否变薄） ----------
 p_log <- ggplot(comp, aes(x = value, fill = group, colour = group)) +
@@ -90,7 +90,7 @@ p_log <- ggplot(comp, aes(x = value, fill = group, colour = group)) +
   labs(title = "延迟分布对比（pseudo-log 尺度，看厚尾）",
        x = "延迟 (pseudo-log)", y = "密度", fill = NULL, colour = NULL) +
   theme_bw(base_size = 13) + theme(legend.position = "top")
-p_log
+#p_log
 ggsave("运送预期算法优化/assets/img2.svg", plot = p_log, device = "svg", width = 8, height = 5, dpi = 300)
 
 # ---------- 4. ECDF 对比（尾部分位一目了然） ----------
@@ -101,7 +101,7 @@ p_ecdf <- ggplot(comp, aes(x = value, colour = group)) +
   labs(title = "ECDF 对比（右尾越高越薄越好）",
        x = "延迟 (pseudo-log)", y = "累积概率", colour = NULL) +
   theme_bw(base_size = 13) + theme(legend.position = "top")
-p_ecdf
+#p_ecdf
 
 # ---------- 5. QQ 图对比（对同一分位网格） ----------
 qs <- seq(0.01, 0.99, by = 0.01)
@@ -118,7 +118,7 @@ p_qq <- ggplot(qq_df, aes(x = p, y = q, colour = group)) +
   labs(title = "分位数曲线对比（同一分位下的值，越低说明尾部越轻）",
        x = "分位 p", y = "分位数值 (pseudo-log)", colour = NULL) +
   theme_bw(base_size = 13) + theme(legend.position = "top")
-p_qq
+#p_qq
 
 # ---------- 6. 关键尾部分位数值表（结论落地） ----------
 tail_table <- comp %>%
@@ -163,17 +163,18 @@ p_density_ln <- ggplot(df_processed, aes(x = `总运送周期`)) +
        title = "直方图+核密度+对数正态拟合曲线",
        subtitle = paste0("meanlog=", round(mu_ln,4), "  sdlog=", round(sigma_ln,4))) +
   theme_bw()
-print(p_density_ln)
+#print(p_density_ln)
 ggsave("运送预期算法优化/assets/img3.svg", plot = p_density_ln, device = "svg", width = 8, height = 5, dpi = 300)
 
 # ----------------------
 df <- df_processed
 remove(comp,qq_df,tail_table,tail_ratio,p_lin,p_log,p_ecdf,p_qq,p_density_ln,x,log_x,mu_ln,sigma_ln,x_mean,x_sd,sk,ku,ex_kurt,p_density,qs,df_processed)
+df_copy2 <- df
 
 # ---------------------- LightGBM 模型数据准备 ----------------------
-df <- df %>% select(-`订单评分`, -`送达时间差_优化后`,-'发货时刻',-'审核通过时刻',-'收货时刻', -'推荐延迟天数',-'审核通过时间',-'预计最晚发货时间',-'预计送达时间',-'实际发货时间',-'实际送达时间')
+df <- df %>% select(-`订单评分`, -`送达时间差_优化后`,-'下单时刻',-'发货时刻',-'审核通过时刻',-'收货时刻', -'推荐延迟天数',-'审核通过时间',-'预计最晚发货时间',-'预计送达时间',-'实际发货时间',-'实际送达时间')
 df_copy <- df
-summary(df)
+#summary(df)
 
 # ---------------------- 特征构造----------------------
 library(dplyr)
@@ -328,7 +329,7 @@ df <- df %>%
   mutate(
     # 如果模型需要 0/1 标签辅助判断，可以保留。但强烈建议同时把“路线P90_总历史”等连续变量也喂给模型
     是否为偏远州 = if_else(
-      路线P90_总历史 >= route_time_90 | (`两地直线距离` > 2500 & `收货州` %in% remote_states), 1, 0
+      路线P90_总历史 >= route_time_90 | (`两地直线距离` > 2500 ), 1, 0
     ),
     # 距离 > 6000km 视为国际/极长距离
     是否为国际订单 = if_else(`两地直线距离` > 6000, 1, 0)
@@ -350,6 +351,32 @@ df <- df %>%
 colnames(df)
 
 write.csv(df, "运送预期算法优化/processed_data/LightGBM.csv", row.names = FALSE, fileEncoding = "UTF-8") 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

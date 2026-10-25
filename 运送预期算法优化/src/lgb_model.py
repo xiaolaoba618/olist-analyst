@@ -5,33 +5,15 @@ import lightgbm as lgb
 import matplotlib.pyplot as plt
 import seaborn as sns
 import shutil
+import joblib
 
 from pathlib import Path
 from sklearn.metrics import mean_absolute_error, mean_squared_error
-from data_prepare import df, BASE_DIR
+from data_prepare import df
+from config import CONFIG
 
 #%% 2. 全局配置：实验时主要修改这里
-CONFIG = {
-    # 随机性与数据切分
-    "random_state": 42, "num_boost_round": 1000, "test_size": 0.20,
-    # 非对称 Pseudo-Huber 损失
-    "under_weights": [3.0, 5.0, 10.0, 20.0], "over_weight": 1.0,
-    "delta": 0.2,  # delta 作用于对数配送时长空间
-    # 超时风险评估
-    "deadline_days": 10.0, "severe_under_days": 3.0,
-    # LightGBM 参数
-    "learning_rate": 0.03, "num_leaves": 31, "max_depth": -1, "min_data_in_leaf": 100,
-    "feature_fraction": 0.8, "bagging_fraction": 0.8, "bagging_freq": 1,
-    "lambda_l1": 0.0, "lambda_l2": 2.0, "min_sum_hessian_in_leaf": 1e-3, "num_threads": -1,
-    # 图表设置
-    "figure_size": (12, 6), "figure_dpi": 200,
-    
-    # 输出路径
-    "model_dir": Path(__file__).parent / "model",
-    "asset_dir": Path(BASE_DIR) / "assets",
-    'report_dir': Path(BASE_DIR) / "report",
-    'output_dir': Path(BASE_DIR) / "output",
-}
+
 
 plt.rcParams["font.sans-serif"] = ["SimHei"]
 plt.rcParams["axes.unicode_minus"] = False
@@ -40,15 +22,18 @@ RANDOM_STATE, NUM_BOOST_ROUND = CONFIG["random_state"], CONFIG["num_boost_round"
 UNDER_WEIGHTS, OVER_WEIGHT = CONFIG["under_weights"], CONFIG["over_weight"]
 DELTA, DEADLINE_DAYS = CONFIG["delta"], CONFIG["deadline_days"]
 SEVERE_UNDER_DAYS = CONFIG["severe_under_days"]
+# 全量口径起点：2017 年 8 月数据只用于初期构造滑动窗口等特征工程，不进入模型
+FULL_START_TIME = pd.Timestamp(CONFIG["full_start_date"])
 
+BASE_DIR = CONFIG["base_dir"]
 OUTPUT_DIR, ASSET_DIR = Path(CONFIG["output_dir"]), Path(CONFIG["asset_dir"])
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 ASSET_DIR.mkdir(parents=True, exist_ok=True)
-MODEL_DIR = Path(CONFIG["model_dir"])
-MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
 #%% 3. 数据准备
 data = df.copy()
+# 记录特征表的原始行号：OOF 预测值要按它挂回订单数据（对齐规则见 lgb_val.py）
+data["_row_id"] = np.arange(len(data))
 data["order_time"] = pd.to_datetime(data["order_time"], errors="coerce")
 
 # 真实配送时间、对数目标和原算法预计时间均需有效
@@ -72,10 +57,12 @@ data = data[
     & np.isfinite(data["total_delivery_time"])
     & np.isfinite(data["estimated_delivery_time"])
 ].copy()
+# 剔除 2017 年 9 月 1 日之前的订单（特征工程预热期，不参与训练与评估）
+data = data[data["order_time"] >= FULL_START_TIME].copy()
 data = data.sort_values("order_time").reset_index(drop=True)
 
 # 防止目标、高基数 ID 以及原算法预测值进入模型；estimated_delivery_time 仅用于基准对比，不作为训练特征
-drop_cols = ["order_time", "seller_id", "seller_city", "customer_city",
+drop_cols = ["order_time", "seller_id", "seller_city", "customer_city", "_row_id",
              "total_delivery_time", "log_delivery_time", "estimated_delivery_time"]
 features = [c for c in data.columns if c not in drop_cols]
 
@@ -109,6 +96,26 @@ print(f"测试集原算法实际超时率：{actual_late.mean():.2%}")
 print(f"训练集：{len(train)} | 测试集：{len(test)} | 测试集占比：{len(test) / len(data):.1%}")
 
 dtrain = lgb.Dataset(X_train, label=y_train, categorical_feature="auto", free_raw_data=False)
+#保存数据切分结果
+# 分类器标签：1 = 实际时长 > 原算法预计；0 = 实际时长 <= 原算法预计
+y_cls_train = (train["total_delivery_time"] > train["estimated_delivery_time"]).astype("int8")
+y_cls_test = (test["total_delivery_time"] > test["estimated_delivery_time"]).astype("int8")
+
+# 打包保存，确保分类器与回归模型使用完全相同的数据切分
+data_bundle = {
+    "X_train": X_train, "X_test": X_test,
+    "y_cls_train": y_cls_train, "y_cls_test": y_cls_test,
+    "y_test_days": y_test_days, "original_estimated_days": original_estimated_days,
+    "features": features,
+}
+
+DATA_BUNDLE_PATH = OUTPUT_DIR / "classifier_data.joblib"
+joblib.dump(data_bundle, DATA_BUNDLE_PATH)
+
+
+print(f"\n分类器数据已保存：{DATA_BUNDLE_PATH}")
+print(f"训练集：{len(X_train)} 条 | 测试集：{len(X_test)} 条")
+print(f"风险样本比例（训练/测试）：{y_cls_train.mean():.2%} / {y_cls_test.mean():.2%}")
 
 #%% 5. 自定义非对称 Pseudo-Huber 损失
 def make_pseudo_huber(under_weight=3.0, over_weight=1.0, delta=0.2):
@@ -131,7 +138,7 @@ dtrain_custom = lgb.Dataset(X_train, label=y_train_centered, categorical_feature
 from pathlib import Path
 
 # 创建模型保存目录
-MODEL_DIR = OUTPUT_DIR / "saved_models"
+MODEL_DIR = CONFIG["model_dir"]
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
 base_params = {k: CONFIG[k] for k in [
@@ -177,7 +184,7 @@ for model_name, model_config in model_configs.items():
     TEMP_MODEL_DIR = Path(r"G:\lgb_models_temp")
     TEMP_MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
-    MODEL_DIR = Path(OUTPUT_DIR) / "saved_models"
+    MODEL_DIR = CONFIG["model_dir"]
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
     temp_path = TEMP_MODEL_DIR / f"{model_name}.txt"
@@ -208,7 +215,7 @@ print(f"\n所有模型已保存至：{MODEL_DIR}")
 # %% 7. 评估配送时长预测：预测精度、提前送达率与延迟风险
 
 # 严重超时阈值：预测时长比真实时长少超过 7 天
-SEVERE_UNDER_DAYS = 7.0
+SEVERE_UNDER_DAYS = CONFIG["severe_under_days"]
 metric_rows = []
 
 for model_name, group in all_predictions.groupby("model", sort=False):
@@ -384,6 +391,8 @@ mean_comparison.to_csv(OUTPUT_DIR / "mean_duration_and_risk_comparison.csv", ind
 
 print(f"\n表格与预测数据保存目录：{OUTPUT_DIR.resolve()}")
 print(f"图表保存目录：{ASSET_DIR.resolve()}")
+
+
 
 
 
