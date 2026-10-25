@@ -101,7 +101,42 @@ SQLite 取数构造变量  →  R 清洗与统计检验  →  Python 建模输�
 
 **② R：数据清洗 + 统计验证** —— 负责判断"这个因子到底有没有用"。构造归因标签后，用卡方检验、Wilcoxon、GLM 优势比模型验证显著性，**通过的因子才进入下一步**。
 
+<<<<<<< HEAD
 **③ Python：建模 + 输出** —— 做规则分级、优化求解、机器学习与蒙特卡洛模拟，产出可直接落地的名单与配置表。
+=======
+**③ Python：建模 + 输出**
+做规则分级、优化求解和蒙特卡洛模拟，产出可直接落地的名单与配置表。
+
+**贯穿全程的可视化挑因子**：`*_data.py` 系列脚本按州、品类、时间峰值、评分区间等维度分别聚合，喂给 `report.html` / `dashboard.html` 可视化看板。先看图发现异常（比如 2018 年 2-3 月延迟率突增到 21%），再回头用 R 检验、用 Python 构造特征——**看图提假设、统计做验证、建模出结果**。
+
+## 三、目录结构
+
+```
+create_db.py                    CSV → SQLite 建库（输出到 db/olist.db）
+db/olist.db                     SQLite 数据库，9 张表
+data/raw/                       原始 CSV
+
+
+延迟率分析/                      主线一：履约延迟
+  src/快递过程分析.sql            取数：距离、时长、归因变量
+  src/data_processed.r           R：归因标签构造 + 显著性检验
+  src/identify_express_risks_data.py   线路风险识别与延时方案求解
+  src/precise_gmv_simulated.py   ETA 调整三方案蒙特卡洛
+  初步报告.md                     完整结论报告
+
+
+客户分析以及复购率判断/            主线二：客户复购
+  src/客户留存数据选取.sql         取数：客户级订单宽表
+  src/data_processed.R           R：清洗与复购特征构造
+  src/time_series_repurchase.py  复购间隔分布
+  src/customer_eval.py           客单分层与高价值名单
+```
+产生的数据文件、可视化报告均未上传，在初步报告中有总体思路和大致结论。
+
+## 四、执行流程
+
+每个问题基本按下面这条链路走一遍，虚线是反馈回路：
+>>>>>>> 8e7adda1574cc0087ef8fc17b5490d4b54216c76
 
 ```mermaid
 flowchart LR
