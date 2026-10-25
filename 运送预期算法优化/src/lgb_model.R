@@ -18,6 +18,7 @@ clean_pt_city <- function(x) {
 df_processed <- df_processed %>%
   mutate(发货城市 = clean_pt_city(发货城市), 收货城市 = clean_pt_city(收货城市))
 
+write.csv(df_processed, "运送预期算法优化/data/订单数据_延迟优化后.csv", row.names = FALSE, fileEncoding = "UTF-8")
 summary(df)
 var(df)
 
