@@ -24,7 +24,7 @@ from Transformer_CNN_model import (
     CONFIG, BASE_DIR, OUTPUT_DIR, ASSET_DIR, MODEL_DIR, DEVICE, PREFIX, SNAP_DIM,
     build_sequence_features, build_static_features, normalize_apply, days_from_log,
     evaluate_predictions, save_distribution_table, plot_distribution,
-    plot_error_distribution, plot_delay_rate, save_summary,
+    plot_error_distribution, plot_delay_rate, save_summary,TransformerVCN
 )
 
 # %% 2. 全局配置
@@ -92,7 +92,12 @@ print(f"特征重建完成：序列 {seq_all.shape} | 静态 {static_all.shape}"
 
 
 # %% 5. 批量预测函数
-def predict_days(model, seq, static, batch_size=2048):
+def predict_days(model, seq, static, center=0.0, batch_size=2048):
+    """模型输出是「相对 center 的 log 偏移」，加回 center 后才能还原为天数。
+
+    L1 模型的 center=0 不受影响；PseudoHuber 各倍率训练时把 log 目标减去了
+    训练集中位数（meta.model_records[].center），漏加会让预测被整体压到 1~2 天。
+    """
     model.eval()
     ds = TensorDataset(torch.tensor(seq, dtype=torch.float32),
                        torch.tensor(static, dtype=torch.float32))
@@ -101,7 +106,7 @@ def predict_days(model, seq, static, batch_size=2048):
     outs = []
     with torch.no_grad():
         for sb, stb in loader:
-            pred_log = model(sb.to(DEVICE), stb.to(DEVICE)).cpu().numpy()
+            pred_log = model(sb.to(DEVICE), stb.to(DEVICE)).cpu().numpy() + center
             outs.append(days_from_log(pred_log))
     return np.concatenate(outs)
 
@@ -119,8 +124,8 @@ for rec in model_records:
 
     model = TransformerVCN(static_dim=static_all.shape[1]).to(DEVICE)
     model.load_state_dict(torch.load(weight_path, map_location=DEVICE))
-    pred_days = predict_days(model, seq_all, static_all)
-    print(f"已加载 {name} | 原始预测均值 {np.mean(pred_days):.3f} 天")
+    pred_days = predict_days(model, seq_all, static_all, center=rec["center"])
+    print(f"已加载 {name} | center={rec['center']:.4f} | 原始预测均值 {np.mean(pred_days):.3f} 天")
 
     # 部署口径换算：预测天数加到下单时间 -> 向后取下一个 00:00 -> 反算天数差
     raw_eta = order_time_aligned + pd.to_timedelta(pd.Series(pred_days), unit="D")
