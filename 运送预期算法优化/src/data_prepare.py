@@ -2,7 +2,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
-import lightgbm as lgb
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, average_precision_score

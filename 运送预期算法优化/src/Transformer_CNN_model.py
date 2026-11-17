@@ -26,7 +26,12 @@ from torch.utils.data import TensorDataset, DataLoader
 from pathlib import Path
 import joblib
 import matplotlib.pyplot as plt
-import seaborn as sns
+try:
+    import seaborn as sns
+    _HAS_SEABORN = True
+except ImportError:  # 轻量环境（如 pt_study）未装 seaborn 时，自动降级到 matplotlib 画核密度
+    sns = None
+    _HAS_SEABORN = False
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from data_prepare import df as feature_data  # 与 lgb_model.py 同源的特征表（英文列名）
@@ -57,7 +62,9 @@ def resolve_device():
     torch.manual_seed(RANDOM_STATE)
     np.random.seed(RANDOM_STATE)
 
-    if preferred.startswith("cuda") and torch.cuda.is_available():
+    # "auto" 或 "cuda[:N]" 都表示：有 GPU 就优先用 GPU
+    want_cuda = preferred == "auto" or preferred.startswith("cuda")
+    if want_cuda and torch.cuda.is_available():
         count = torch.cuda.device_count()
         idx = 0
         if ":" in preferred:
@@ -76,12 +83,10 @@ def resolve_device():
         print(f"[设备] 使用 GPU：{device} · {name} · {mem:.1f} GB（可见 {count} 张卡）")
         return device
 
-    if preferred.startswith("cuda"):
+    if want_cuda:
         print(f"[设备] 配置请求 {preferred}，但未检测到可用 CUDA，自动回退 CPU")
-    elif preferred == "auto":
-        print("[设备] auto 模式：未检测到可用 CUDA，使用 CPU")
     else:
-        print(f"[设备] 按配置使用 CPU")
+        print("[设备] 按配置使用 CPU")
     return torch.device("cpu")
 
 
@@ -285,6 +290,27 @@ def display_name(model_name):
     return "原算法" if model_name == "Original_Algorithm" else model_name
 
 
+def kdeplot(values, label, linewidth=2.0):
+    """核密度曲线：有 seaborn 用 seaborn，否则用 scipy/matplotlib 降级实现。"""
+    values = np.asarray(values, dtype=float)
+    values = values[np.isfinite(values)]
+    if len(values) < 2:
+        return
+    if _HAS_SEABORN:
+        sns.kdeplot(values, label=label, linewidth=linewidth)
+        return
+    # 降级：用高斯核密度估计后画折线（scipy 缺失时退回直方图概率密度）
+    try:
+        from scipy.stats import gaussian_kde
+        grid = np.linspace(values.min(), values.max(), 200)
+        density = gaussian_kde(values)(grid)
+        plt.plot(grid, density, label=label, linewidth=linewidth)
+    except ImportError:
+        plt.hist(values, bins=80, density=True, histtype="step",
+                 label=label, linewidth=linewidth)
+
+
+
 def evaluate_predictions(predictions, scope_name):
     """预测精度、提前送达率与延迟风险；比例保存为 0~1。"""
     rows = []
@@ -347,12 +373,12 @@ def plot_distribution(predictions, scope_name, figure_name):
     actual = first_group["actual_days"].to_numpy(dtype=float)
     actual = actual[np.isfinite(actual) & (actual > 0)]
     plt.figure(figsize=CONFIG["figure_size"])
-    sns.kdeplot(actual, label="真实总运送周期", linewidth=2.8)
+    kdeplot(actual, "真实总运送周期", linewidth=2.8)
     for name, group in predictions.groupby("model", sort=False):
         v = group["pred_days"].to_numpy(dtype=float)
         v = v[np.isfinite(v) & (v > 0)]
         if len(v) > 1:
-            sns.kdeplot(v, label=display_name(name), linewidth=2)
+            kdeplot(v, display_name(name), linewidth=2)
     plt.title(f"{scope_name}：原算法、各模型预期总周期与真实周期分布对比")
     plt.xlabel("配送周期（天）")
     plt.ylabel("概率密度")
@@ -372,7 +398,7 @@ def plot_error_distribution(predictions, scope_name, figure_name):
         ok = np.isfinite(a) & np.isfinite(p) & (a > 0) & (p > 0)
         err = p[ok] - a[ok]
         if len(err) > 1:
-            sns.kdeplot(err, label=display_name(name), linewidth=2)
+            kdeplot(err, display_name(name), linewidth=2)
     plt.axvline(0, color="red", linestyle="--", linewidth=1.8, label="零误差线")
     plt.title(f"{scope_name}：原算法与各模型的预期周期误差分布")
     plt.xlabel("预期总周期 - 真实总运送周期（天）")

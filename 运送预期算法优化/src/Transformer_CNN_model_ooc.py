@@ -28,7 +28,6 @@ from Transformer_CNN_model import (
 # %% 2. 全局配置
 plt_needed = True  # 保留开关，便于无图形环境下跳过绘图
 import matplotlib.pyplot as plt
-import seaborn as sns
 plt.rcParams["font.sans-serif"] = ["SimHei"]
 plt.rcParams["axes.unicode_minus"] = False
 
