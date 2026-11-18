@@ -70,7 +70,7 @@ CONFIG = {
     "tc_static_hidden": 64,
     "tc_fusion_hidden": 64,
     # 训练：AdamW + 线性 warmup + 余弦退火（与 MLP 分类器同策略）
-    "tc_epochs": 60,
+    "tc_epochs": 100,
     "tc_batch_size": 256,
     "tc_lr": 1e-3,
     "tc_weight_decay": 1e-4,
@@ -85,7 +85,7 @@ CONFIG = {
     "tc_weight_cap": 20.0,       # 低估权重的数值上限，防止极端倍率导致梯度爆炸
     # 折外验证（时间序列前向链 K 折）
     "tc_oof_folds": 5,
-    "tc_oof_epochs": 25,         # 折外每折训练的轮数（比全量训练少，控制成本）
+    "tc_oof_epochs": 50,         # 折外每折训练的轮数（比全量训练少，控制成本）
     # 输出命名：文件前缀，与 LGB 的 timeout_*/val_*/ooc_* 区分
     "tc_output_prefix": "tcnn_",
     "tc_pred_filename": "TransformerCNN预测数据.csv",
