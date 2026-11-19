@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-17T13:56:31.894811</dc:date>
+    <dc:date>2026-11-19T02:26:04.371903</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -43,50 +43,50 @@ L 190.600762 325.767037
 L 190.600762 62.937005 
 L 78.350909 62.937005 
 z
-" clip-path="url(#pc6bb116ca9)" style="fill: #1f77b4"/>
+" clip-path="url(#p4aeaa1f358)" style="fill: #1f77b4"/>
    </g>
    <g id="patch_4">
     <path d="M 251.042991 325.767037 
 L 363.292845 325.767037 
-L 363.292845 234.181024 
-L 251.042991 234.181024 
+L 363.292845 219.316511 
+L 251.042991 219.316511 
 z
-" clip-path="url(#pc6bb116ca9)" style="fill: #1f77b4"/>
+" clip-path="url(#p4aeaa1f358)" style="fill: #1f77b4"/>
    </g>
    <g id="patch_5">
     <path d="M 423.735073 325.767037 
 L 535.984927 325.767037 
-L 535.984927 278.255695 
-L 423.735073 278.255695 
+L 535.984927 271.724629 
+L 423.735073 271.724629 
 z
-" clip-path="url(#pc6bb116ca9)" style="fill: #1f77b4"/>
+" clip-path="url(#p4aeaa1f358)" style="fill: #1f77b4"/>
    </g>
    <g id="patch_6">
     <path d="M 596.427155 325.767037 
 L 708.677009 325.767037 
-L 708.677009 280.877097 
-L 596.427155 280.877097 
+L 708.677009 272.915722 
+L 596.427155 272.915722 
 z
-" clip-path="url(#pc6bb116ca9)" style="fill: #1f77b4"/>
+" clip-path="url(#p4aeaa1f358)" style="fill: #1f77b4"/>
    </g>
    <g id="patch_7">
     <path d="M 769.119238 325.767037 
 L 881.369091 325.767037 
-L 881.369091 255.25258 
-L 769.119238 255.25258 
+L 881.369091 247.902757 
+L 769.119238 247.902757 
 z
-" clip-path="url(#pc6bb116ca9)" style="fill: #1f77b4"/>
+" clip-path="url(#p4aeaa1f358)" style="fill: #1f77b4"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
       <defs>
-       <path id="ma72dcddb0c" d="M 0 0 
+       <path id="m1a500ff990" d="M 0 0 
 L 0 3.5 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#ma72dcddb0c" x="134.475836" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m1a500ff990" x="134.475836" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_1">
@@ -282,7 +282,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#ma72dcddb0c" x="307.167918" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m1a500ff990" x="307.167918" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_2">
@@ -537,35 +537,30 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use xlink:href="#ma72dcddb0c" x="479.86" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m1a500ff990" x="479.86" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_3">
-      <!-- TransCNN_PseudoHuber_Under20x -->
+      <!-- TransCNN_PseudoHuber_Under40x -->
       <g transform="translate(347.851064 401.835267) rotate(-25) scale(0.1 -0.1)">
        <defs>
-        <path id="SimHei-15" d="M 300 250 
-Q 325 625 650 925 
-Q 975 1225 1475 1862 
-Q 1975 2500 2125 2850 
-Q 2275 3200 2237 3450 
-Q 2200 3700 2000 3862 
-Q 1800 4025 1537 4000 
-Q 1275 3975 1037 3800 
-Q 800 3625 675 3275 
-L 200 3350 
-Q 400 3925 712 4187 
-Q 1025 4450 1450 4475 
-Q 1700 4500 1900 4462 
-Q 2100 4425 2312 4287 
-Q 2525 4150 2662 3875 
-Q 2800 3600 2762 3212 
-Q 2725 2825 2375 2287 
-Q 2025 1750 1025 600 
-L 2825 600 
-L 2825 150 
-L 300 150 
-L 300 250 
+        <path id="SimHei-17" d="M 2000 1100 
+L 75 1100 
+L 75 1525 
+L 2100 4450 
+L 2475 4450 
+L 2475 1525 
+L 3075 1525 
+L 3075 1100 
+L 2475 1100 
+L 2475 150 
+L 2000 150 
+L 2000 1100 
+z
+M 2000 1525 
+L 2000 3500 
+L 600 1525 
+L 2000 1525 
 z
 " transform="scale(0.015625)"/>
         <path id="SimHei-13" d="M 225 2537 
@@ -622,7 +617,7 @@ z
        <use xlink:href="#SimHei-47" transform="translate(1150 0)"/>
        <use xlink:href="#SimHei-48" transform="translate(1200 0)"/>
        <use xlink:href="#SimHei-55" transform="translate(1250 0)"/>
-       <use xlink:href="#SimHei-15" transform="translate(1300 0)"/>
+       <use xlink:href="#SimHei-17" transform="translate(1300 0)"/>
        <use xlink:href="#SimHei-13" transform="translate(1350 0)"/>
        <use xlink:href="#SimHei-5b" transform="translate(1400 0)"/>
       </g>
@@ -631,30 +626,35 @@ z
     <g id="xtick_4">
      <g id="line2d_4">
       <g>
-       <use xlink:href="#ma72dcddb0c" x="652.552082" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m1a500ff990" x="652.552082" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_4">
-      <!-- TransCNN_PseudoHuber_Under40x -->
+      <!-- TransCNN_PseudoHuber_Under20x -->
       <g transform="translate(520.543146 401.835267) rotate(-25) scale(0.1 -0.1)">
        <defs>
-        <path id="SimHei-17" d="M 2000 1100 
-L 75 1100 
-L 75 1525 
-L 2100 4450 
-L 2475 4450 
-L 2475 1525 
-L 3075 1525 
-L 3075 1100 
-L 2475 1100 
-L 2475 150 
-L 2000 150 
-L 2000 1100 
-z
-M 2000 1525 
-L 2000 3500 
-L 600 1525 
-L 2000 1525 
+        <path id="SimHei-15" d="M 300 250 
+Q 325 625 650 925 
+Q 975 1225 1475 1862 
+Q 1975 2500 2125 2850 
+Q 2275 3200 2237 3450 
+Q 2200 3700 2000 3862 
+Q 1800 4025 1537 4000 
+Q 1275 3975 1037 3800 
+Q 800 3625 675 3275 
+L 200 3350 
+Q 400 3925 712 4187 
+Q 1025 4450 1450 4475 
+Q 1700 4500 1900 4462 
+Q 2100 4425 2312 4287 
+Q 2525 4150 2662 3875 
+Q 2800 3600 2762 3212 
+Q 2725 2825 2375 2287 
+Q 2025 1750 1025 600 
+L 2825 600 
+L 2825 150 
+L 300 150 
+L 300 250 
 z
 " transform="scale(0.015625)"/>
        </defs>
@@ -684,7 +684,7 @@ z
        <use xlink:href="#SimHei-47" transform="translate(1150 0)"/>
        <use xlink:href="#SimHei-48" transform="translate(1200 0)"/>
        <use xlink:href="#SimHei-55" transform="translate(1250 0)"/>
-       <use xlink:href="#SimHei-17" transform="translate(1300 0)"/>
+       <use xlink:href="#SimHei-15" transform="translate(1300 0)"/>
        <use xlink:href="#SimHei-13" transform="translate(1350 0)"/>
        <use xlink:href="#SimHei-5b" transform="translate(1400 0)"/>
       </g>
@@ -693,7 +693,7 @@ z
     <g id="xtick_5">
      <g id="line2d_5">
       <g>
-       <use xlink:href="#ma72dcddb0c" x="825.244164" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m1a500ff990" x="825.244164" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_5">
@@ -1235,16 +1235,16 @@ z
      <g id="line2d_6">
       <path d="M 38.2 325.767037 
 L 921.52 325.767037 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_7">
       <defs>
-       <path id="m4a11a7bce3" d="M 0 0 
+       <path id="m96368a54c8" d="M 0 0 
 L -3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="325.767037" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_7">
@@ -1256,36 +1256,36 @@ L -3.5 0
     </g>
     <g id="ytick_2">
      <g id="line2d_8">
-      <path d="M 38.2 289.189701 
-L 921.52 289.189701 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+      <path d="M 38.2 285.377192 
+L 921.52 285.377192 
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_9">
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="289.189701" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="285.377192" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_8">
       <!-- 5 -->
-      <g transform="translate(26.2 293.486576) scale(0.1 -0.1)">
+      <g transform="translate(26.2 289.674067) scale(0.1 -0.1)">
        <use xlink:href="#SimHei-18"/>
       </g>
      </g>
     </g>
     <g id="ytick_3">
      <g id="line2d_10">
-      <path d="M 38.2 252.612364 
-L 921.52 252.612364 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+      <path d="M 38.2 244.987348 
+L 921.52 244.987348 
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_11">
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="252.612364" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="244.987348" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_9">
       <!-- 10 -->
-      <g transform="translate(21.2 256.909239) scale(0.1 -0.1)">
+      <g transform="translate(21.2 249.284223) scale(0.1 -0.1)">
        <use xlink:href="#SimHei-14"/>
        <use xlink:href="#SimHei-13" transform="translate(50 0)"/>
       </g>
@@ -1293,18 +1293,18 @@ L 921.52 252.612364
     </g>
     <g id="ytick_4">
      <g id="line2d_12">
-      <path d="M 38.2 216.035028 
-L 921.52 216.035028 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+      <path d="M 38.2 204.597503 
+L 921.52 204.597503 
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_13">
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="216.035028" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="204.597503" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_10">
       <!-- 15 -->
-      <g transform="translate(21.2 220.331903) scale(0.1 -0.1)">
+      <g transform="translate(21.2 208.894378) scale(0.1 -0.1)">
        <use xlink:href="#SimHei-14"/>
        <use xlink:href="#SimHei-18" transform="translate(50 0)"/>
       </g>
@@ -1312,18 +1312,18 @@ L 921.52 216.035028
     </g>
     <g id="ytick_5">
      <g id="line2d_14">
-      <path d="M 38.2 179.457692 
-L 921.52 179.457692 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+      <path d="M 38.2 164.207659 
+L 921.52 164.207659 
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_15">
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="179.457692" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="164.207659" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_11">
       <!-- 20 -->
-      <g transform="translate(21.2 183.754567) scale(0.1 -0.1)">
+      <g transform="translate(21.2 168.504534) scale(0.1 -0.1)">
        <use xlink:href="#SimHei-15"/>
        <use xlink:href="#SimHei-13" transform="translate(50 0)"/>
       </g>
@@ -1331,18 +1331,18 @@ L 921.52 179.457692
     </g>
     <g id="ytick_6">
      <g id="line2d_16">
-      <path d="M 38.2 142.880356 
-L 921.52 142.880356 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+      <path d="M 38.2 123.817814 
+L 921.52 123.817814 
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_17">
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="142.880356" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="123.817814" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_12">
       <!-- 25 -->
-      <g transform="translate(21.2 147.177231) scale(0.1 -0.1)">
+      <g transform="translate(21.2 128.114689) scale(0.1 -0.1)">
        <use xlink:href="#SimHei-15"/>
        <use xlink:href="#SimHei-18" transform="translate(50 0)"/>
       </g>
@@ -1350,18 +1350,18 @@ L 921.52 142.880356
     </g>
     <g id="ytick_7">
      <g id="line2d_18">
-      <path d="M 38.2 106.303019 
-L 921.52 106.303019 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+      <path d="M 38.2 83.427969 
+L 921.52 83.427969 
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_19">
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="106.303019" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="83.427969" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_13">
       <!-- 30 -->
-      <g transform="translate(21.2 110.599894) scale(0.1 -0.1)">
+      <g transform="translate(21.2 87.724844) scale(0.1 -0.1)">
        <defs>
         <path id="SimHei-16" d="M 250 1225 
 L 700 1300 
@@ -1400,43 +1400,24 @@ z
     </g>
     <g id="ytick_8">
      <g id="line2d_20">
-      <path d="M 38.2 69.725683 
-L 921.52 69.725683 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
+      <path d="M 38.2 43.038125 
+L 921.52 43.038125 
+" clip-path="url(#p4aeaa1f358)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
      </g>
      <g id="line2d_21">
       <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="69.725683" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m96368a54c8" x="38.2" y="43.038125" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_14">
       <!-- 35 -->
-      <g transform="translate(21.2 74.022558) scale(0.1 -0.1)">
+      <g transform="translate(21.2 47.335) scale(0.1 -0.1)">
        <use xlink:href="#SimHei-16"/>
        <use xlink:href="#SimHei-18" transform="translate(50 0)"/>
       </g>
      </g>
     </g>
-    <g id="ytick_9">
-     <g id="line2d_22">
-      <path d="M 38.2 33.148347 
-L 921.52 33.148347 
-" clip-path="url(#pc6bb116ca9)" style="fill: none; stroke-dasharray: 2.96,1.28; stroke-dashoffset: 0; stroke: #b0b0b0; stroke-opacity: 0.3; stroke-width: 0.8"/>
-     </g>
-     <g id="line2d_23">
-      <g>
-       <use xlink:href="#m4a11a7bce3" x="38.2" y="33.148347" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_15">
-      <!-- 40 -->
-      <g transform="translate(21.2 37.445222) scale(0.1 -0.1)">
-       <use xlink:href="#SimHei-17"/>
-       <use xlink:href="#SimHei-13" transform="translate(50 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="text_16">
+    <g id="text_15">
      <!-- 延迟率（%） -->
      <g transform="translate(15.79375 202.139768) rotate(-90) scale(0.1 -0.1)">
       <defs>
@@ -1733,8 +1714,8 @@ L 921.52 325.767037
 L 921.52 23.5125 
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="text_17">
-    <!-- 35.93% -->
+   <g id="text_16">
+    <!-- 32.54% -->
     <g transform="translate(120.975836 58.67138) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-11" d="M 1075 125 
@@ -1742,6 +1723,106 @@ L 500 125
 L 500 675 
 L 1075 675 
 L 1075 125 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#SimHei-16"/>
+     <use xlink:href="#SimHei-15" transform="translate(50 0)"/>
+     <use xlink:href="#SimHei-11" transform="translate(100 0)"/>
+     <use xlink:href="#SimHei-18" transform="translate(150 0)"/>
+     <use xlink:href="#SimHei-17" transform="translate(200 0)"/>
+     <use xlink:href="#SimHei-8" transform="translate(250 0)"/>
+    </g>
+   </g>
+   <g id="text_17">
+    <!-- 13.18% -->
+    <g transform="translate(293.667918 215.050886) scale(0.09 -0.09)">
+     <defs>
+      <path id="SimHei-1b" d="M 175 1375 
+Q 175 1675 325 1962 
+Q 475 2250 825 2425 
+Q 525 2600 425 2812 
+Q 325 3025 312 3300 
+Q 300 3575 387 3775 
+Q 475 3975 650 4150 
+Q 825 4325 1037 4387 
+Q 1250 4450 1500 4450 
+Q 1750 4450 1950 4400 
+Q 2150 4350 2375 4187 
+Q 2600 4025 2700 3725 
+Q 2800 3425 2687 3025 
+Q 2575 2625 2100 2400 
+Q 2525 2275 2700 2012 
+Q 2875 1750 2875 1375 
+Q 2875 1000 2762 775 
+Q 2650 550 2512 400 
+Q 2375 250 2137 162 
+Q 1900 75 1537 75 
+Q 1175 75 912 162 
+Q 650 250 475 425 
+Q 300 600 237 837 
+Q 175 1075 175 1375 
+z
+M 687 1400 
+Q 675 1100 787 875 
+Q 900 650 1200 587 
+Q 1500 525 1825 600 
+Q 2150 675 2275 950 
+Q 2400 1225 2362 1500 
+Q 2325 1775 2050 1962 
+Q 1775 2150 1450 2125 
+Q 1125 2100 912 1900 
+Q 700 1700 687 1400 
+z
+M 775 3350 
+Q 775 3100 950 2875 
+Q 1125 2650 1500 2650 
+Q 1875 2650 2062 2875 
+Q 2250 3100 2237 3412 
+Q 2225 3725 2012 3875 
+Q 1800 4025 1437 4000 
+Q 1075 3975 925 3787 
+Q 775 3600 775 3350 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#SimHei-14"/>
+     <use xlink:href="#SimHei-16" transform="translate(50 0)"/>
+     <use xlink:href="#SimHei-11" transform="translate(100 0)"/>
+     <use xlink:href="#SimHei-14" transform="translate(150 0)"/>
+     <use xlink:href="#SimHei-1b" transform="translate(200 0)"/>
+     <use xlink:href="#SimHei-8" transform="translate(250 0)"/>
+    </g>
+   </g>
+   <g id="text_18">
+    <!-- 6.69% -->
+    <g transform="translate(468.61 267.459004) scale(0.09 -0.09)">
+     <defs>
+      <path id="SimHei-19" d="M 250 1612 
+Q 275 1975 387 2225 
+Q 500 2475 725 2850 
+L 1750 4450 
+L 2325 4450 
+L 1275 2800 
+Q 1950 2975 2350 2750 
+Q 2750 2525 2887 2237 
+Q 3025 1950 3037 1612 
+Q 3050 1275 2937 950 
+Q 2825 625 2537 362 
+Q 2250 100 1737 75 
+Q 1225 50 862 262 
+Q 500 475 362 862 
+Q 225 1250 250 1612 
+z
+M 1025 787 
+Q 1250 550 1625 525 
+Q 2000 500 2250 775 
+Q 2500 1050 2500 1575 
+Q 2500 2100 2187 2300 
+Q 1875 2500 1487 2450 
+Q 1100 2400 925 2075 
+Q 750 1750 775 1387 
+Q 800 1025 1025 787 
 z
 " transform="scale(0.015625)"/>
       <path id="SimHei-1c" d="M 800 75 
@@ -1774,77 +1855,26 @@ Q 625 3200 662 2875
 z
 " transform="scale(0.015625)"/>
      </defs>
-     <use xlink:href="#SimHei-16"/>
-     <use xlink:href="#SimHei-18" transform="translate(50 0)"/>
-     <use xlink:href="#SimHei-11" transform="translate(100 0)"/>
-     <use xlink:href="#SimHei-1c" transform="translate(150 0)"/>
-     <use xlink:href="#SimHei-16" transform="translate(200 0)"/>
-     <use xlink:href="#SimHei-8" transform="translate(250 0)"/>
-    </g>
-   </g>
-   <g id="text_18">
-    <!-- 12.52% -->
-    <g transform="translate(293.667918 229.915399) scale(0.09 -0.09)">
-     <use xlink:href="#SimHei-14"/>
-     <use xlink:href="#SimHei-15" transform="translate(50 0)"/>
-     <use xlink:href="#SimHei-11" transform="translate(100 0)"/>
-     <use xlink:href="#SimHei-18" transform="translate(150 0)"/>
-     <use xlink:href="#SimHei-15" transform="translate(200 0)"/>
-     <use xlink:href="#SimHei-8" transform="translate(250 0)"/>
-    </g>
-   </g>
-   <g id="text_19">
-    <!-- 6.49% -->
-    <g transform="translate(468.61 273.99007) scale(0.09 -0.09)">
-     <defs>
-      <path id="SimHei-19" d="M 250 1612 
-Q 275 1975 387 2225 
-Q 500 2475 725 2850 
-L 1750 4450 
-L 2325 4450 
-L 1275 2800 
-Q 1950 2975 2350 2750 
-Q 2750 2525 2887 2237 
-Q 3025 1950 3037 1612 
-Q 3050 1275 2937 950 
-Q 2825 625 2537 362 
-Q 2250 100 1737 75 
-Q 1225 50 862 262 
-Q 500 475 362 862 
-Q 225 1250 250 1612 
-z
-M 1025 787 
-Q 1250 550 1625 525 
-Q 2000 500 2250 775 
-Q 2500 1050 2500 1575 
-Q 2500 2100 2187 2300 
-Q 1875 2500 1487 2450 
-Q 1100 2400 925 2075 
-Q 750 1750 775 1387 
-Q 800 1025 1025 787 
-z
-" transform="scale(0.015625)"/>
-     </defs>
      <use xlink:href="#SimHei-19"/>
      <use xlink:href="#SimHei-11" transform="translate(50 0)"/>
-     <use xlink:href="#SimHei-17" transform="translate(100 0)"/>
+     <use xlink:href="#SimHei-19" transform="translate(100 0)"/>
      <use xlink:href="#SimHei-1c" transform="translate(150 0)"/>
      <use xlink:href="#SimHei-8" transform="translate(200 0)"/>
     </g>
    </g>
-   <g id="text_20">
-    <!-- 6.14% -->
-    <g transform="translate(641.302082 276.611472) scale(0.09 -0.09)">
+   <g id="text_19">
+    <!-- 6.54% -->
+    <g transform="translate(641.302082 268.650097) scale(0.09 -0.09)">
      <use xlink:href="#SimHei-19"/>
      <use xlink:href="#SimHei-11" transform="translate(50 0)"/>
-     <use xlink:href="#SimHei-14" transform="translate(100 0)"/>
+     <use xlink:href="#SimHei-18" transform="translate(100 0)"/>
      <use xlink:href="#SimHei-17" transform="translate(150 0)"/>
      <use xlink:href="#SimHei-8" transform="translate(200 0)"/>
     </g>
    </g>
-   <g id="text_21">
+   <g id="text_20">
     <!-- 9.64% -->
-    <g transform="translate(813.994164 250.986955) scale(0.09 -0.09)">
+    <g transform="translate(813.994164 243.637132) scale(0.09 -0.09)">
      <use xlink:href="#SimHei-1c"/>
      <use xlink:href="#SimHei-11" transform="translate(50 0)"/>
      <use xlink:href="#SimHei-19" transform="translate(100 0)"/>
@@ -1852,7 +1882,7 @@ z
      <use xlink:href="#SimHei-8" transform="translate(200 0)"/>
     </g>
    </g>
-   <g id="text_22">
+   <g id="text_21">
     <!-- 折外订单：不同算法的配送延迟率对比 -->
     <g transform="translate(377.86 17.5125) scale(0.12 -0.12)">
      <defs>
@@ -2447,7 +2477,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pc6bb116ca9">
+  <clipPath id="p4aeaa1f358">
    <rect x="38.2" y="23.5125" width="883.32" height="302.254537"/>
   </clipPath>
  </defs>
